@@ -7,12 +7,22 @@ import java.util.List;
  * conversationId: 会话 id
  * messages: 消息对象数组,每条形如 {"role":"user","content":"..."}
  * model: 可选,覆盖默认模型名
+ * provider: 可选,选择大模型来源: ollama(默认,本地) / api(OpenAI 兼容接口)
  */
 public class ChatRequest {
 
     private String conversationId;
     private List<Message> messages;
     private String model;
+    private String provider;
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
 
     public String getConversationId() {
         return conversationId;

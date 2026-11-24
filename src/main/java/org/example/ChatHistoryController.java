@@ -78,6 +78,38 @@ public class ChatHistoryController {
     }
 
     /**
+     * 列出当前用户的所有会话,按 update_time 降序(最近活跃的在前)
+     */
+    @GetMapping("/conversations")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> listConversations() {
+
+        Long userId = currentUserId();
+        if (userId == null) {
+            return ApiResponse.<Map<String, Object>>fail(ResultCode.UNAUTHORIZED).toEntity();
+        }
+
+        List<Conversation> list = conversationMapper.selectList(
+                new LambdaQueryWrapper<Conversation>()
+                        .eq(Conversation::getUserId, userId)
+                        .orderByDesc(Conversation::getUpdateTime));
+
+        List<Map<String, Object>> records = list.stream()
+                .map(c -> {
+                    Map<String, Object> item = new java.util.HashMap<>();
+                    item.put("id", c.getId());
+                    item.put("title", c.getTitle() == null ? "" : c.getTitle());
+                    item.put("createTime", c.getCreateTime() == null ? "" : c.getCreateTime().toString());
+                    item.put("updateTime", c.getUpdateTime() == null ? "" : c.getUpdateTime().toString());
+                    return item;
+                })
+                .toList();
+
+        return ApiResponse.ok(Map.of(
+                "records", records,
+                "total", records.size())).toEntity();
+    }
+
+    /**
      * 插入聊天消息:role 必须为 user/assistant/system 之一
      */
     @PostMapping("/message")

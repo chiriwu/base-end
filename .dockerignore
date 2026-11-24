@@ -1,0 +1,8 @@
+d:\myPracticeEnd\base-end\.dockerignore
+target/
+.git/
+.idea/
+*.iml
+data/
+application-local.properties
+vector-store.json
